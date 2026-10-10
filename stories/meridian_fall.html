@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Fall — Chapter One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #10141a;
+    --panel: #171c24;
+    --ink: #e6e9ef;
+    --ink-soft: #8b93a3;
+    --rule: #2a313d;
+    --accent: #4fb8c4;
+    --accent-dim: #2c5a60;
+    --warn: #d98c4a;
+    --shadow: rgba(0, 0, 0, 0.4);
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f3f1ec;
+    --panel: #ffffff;
+    --ink: #191c22;
+    --ink-soft: #5b6270;
+    --rule: #d8d4c9;
+    --accent: #1f7c86;
+    --accent-dim: #cdeaea;
+    --warn: #a85f1e;
+    --shadow: rgba(25, 28, 34, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 6rem;
+  }
+
+  .ticket-badge {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.8rem;
+  }
+
+  .ticket-badge span {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 0.3rem 0.65rem;
+    border-radius: 3px;
+    opacity: 0.85;
+  }
+
+  h1 {
+    font-weight: 600;
+    font-size: clamp(1.9rem, 5vw, 2.7rem);
+    line-height: 1.18;
+    text-align: center;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.6rem;
+    color: var(--ink);
+  }
+
+  .chapter-label {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    font-style: italic;
+    margin: 0 0 3.4rem;
+  }
+
+  .story p {
+    font-size: 1.1rem;
+    line-height: 1.82;
+    margin: 0 0 1.45rem;
+    max-width: 62ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .slack-line {
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    background: var(--panel);
+    border-left: 2px solid var(--accent);
+    padding: 0.9rem 1.1rem;
+    margin: 1.6rem auto;
+    max-width: 58ch;
+    border-radius: 2px;
+    box-shadow: 0 4px 14px var(--shadow);
+  }
+
+  .slack-line strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 3.2rem 0;
+    font-family: var(--mono);
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+  }
+
+  .divider .bar {
+    width: 36px;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .divider .cursor {
+    color: var(--accent);
+  }
+
+  .whisper {
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .signoff {
+    text-align: center;
+    margin-top: 3rem;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 3rem 1.1rem 4.5rem; }
+    .story p, .slack-line { font-size: 1.02rem; }
+  }
+
+  .ai-footnote {
+    margin-top: 3rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="ticket-badge"><span>MER-4471 · BLOCKER</span></div>
+    <h1>Meridian Fall</h1>
+    <p class="chapter-label">Chapter One, continued — 7:00 a.m.</p>
+
+    <div class="story">
+      <p>Priya saw it first.</p>
+
+      <p>She was still at her desk at 7 a.m. — not because she'd stayed the whole night, but because she'd come back in early to fix a scroll-jank bug in the inventory grid before anyone else arrived, and the #meridian-leads channel was open on her second monitor out of habit. She wasn't in that channel. She'd been added to it by accident three months ago during a reorg and nobody had ever removed her.</p>
+
+      <div class="slack-line">
+        <strong>RUSSELL VANCE:</strong> confirming 9am sync moved to 8:30, need scope numbers before Gauntlet call at 10<br>
+        <strong>RUSSELL VANCE:</strong> Sarah's putting together effort est on the battle pass / scrap economy integration overnight, will have something by then
+      </div>
+
+      <p>Priya read it twice. Then she stood up so fast her chair rolled back into the shelf behind her, knocking over a mug of pens that had been living there since launch of the last game.</p>
+
+      <p>She found Sarah in the kitchen, refilling a water bottle at the filtered tap like a person pretending the last five hours hadn't happened.</p>
+
+      <p>"Scrap economy integration," Priya said, no preamble. "Battle pass. Is that a real thing that's happening or is that Russell being Russell."</p>
+
+      <p>Sarah didn't turn around right away. The tap kept running longer than it needed to.</p>
+
+      <p>"It's a thing being <em>discussed</em>," she said. "I scoped an estimate. That's not the same as it happening."</p>
+
+      <p>"You scoped it." Priya's voice had gone very flat, the way it did in reviews when she was holding something back that would come out worse later if she let it out now. "You scoped the thing that turns the crafting system I spent six weeks building around <em>not</em> having numbers on screen into — what, a shop? A currency sink?"</p>
+
+      <p>"I don't know what it turns into yet. Nobody's decided the final shape." Sarah capped the bottle. Her hands, she noticed distantly, were not quite steady. "Russell asked for a number so Marcus has something real to fight with in the room. That's all it was."</p>
+
+      <p>"That's all it <em>was</em>," Priya repeated. "Sarah. You know how this goes. The estimate exists now. The estimate is a document. Documents don't get un-created. Somebody in a room with a P&amp;L is going to look at your number and go 'four weeks, that's fine, greenlight it,' and by the time Marcus is fighting for anything, he's fighting to keep a battle pass from being <em>worse</em>, not fighting to not have one."</p>
+
+      <p>Elena arrived in the doorway then, coffee in hand, and Sarah understood from the set of her jaw that Priya had already texted her.</p>
+
+      <p>"Show me the tier doc," Elena said. Not hello. Not good morning. "The one Russell sent you last night."</p>
+
+      <p>"Elena—"</p>
+
+      <p>"You have it open somewhere. Show me."</p>
+
+      <div class="divider"><span class="bar"></span><span class="cursor">▌</span><span class="bar"></span></div>
+
+      <p>Sarah didn't have a good reason to refuse, so she didn't. She pulled it up on her phone, the three of them crowding around the small screen in a kitchen that smelled like burnt coffee grounds — the pot had been left on too long again, nobody's job to fix it, everyone's problem. Elena scrolled with her thumb. Cosmetic tier. Premium track. A line item near the bottom, added almost as an afterthought by someone in monetization who had clearly never opened a design doc for Meridian in their life: <span class="whisper">scrap material bundles — evaluate soft-gate feasibility on core crafting resources.</span></p>
+
+      <p>Elena's jaw tightened. She'd drawn those scrap markets from a reference trip to a refugee logistics hub, had spent an entire crit session explaining why the color grading on the currency icons mattered, why <em>desperation, not slot machine</em> was written in Sharpie on the wall above her desk and not just in a doc nobody read.</p>
+
+      <p>"Soft-gate feasibility," Elena said, like the words tasted bad. "That's not a design term. That's a term for making people pay to stop feeling something we built on purpose."</p>
+
+      <p>"I know what it is," Sarah said, and it came out sharper than she meant, sharp enough that Priya looked up. "I know exactly what it is. I've been staring at it since two in the morning. You think I don't know what it does to your grid, to your markets? I gave Russell a number because the alternative was Marcus walking into that room at eight-thirty with nothing, and them deciding the scope <em>for</em> us with people who've never played the game."</p>
+
+      <p>"Or," Priya said quietly, "you could have said no. Or slow. Or 'I need to loop in the people whose work this actually touches before I hand anyone a timeline.' You didn't have to hand them a clean four-week estimate at two a.m. all by yourself."</p>
+
+      <p>That landed, and Sarah knew it had landed, because there was nothing to say back to it that wasn't also true.</p>
+
+      <p>The coffee pot beeped somewhere behind them, ignored. Down the hall, the elevator chimed — someone else arriving early, oblivious, about to walk into a kitchen gone very quiet.</p>
+
+      <p>"Eight-thirty," Elena said finally, straightening. "I want to be in that room."</p>
+
+      <p>"It's leads only."</p>
+
+      <p>"Then get me in," Elena said, "or I'm sending Marcus my own deck before he walks in, and you can explain to Russell why there are two competing documents on his desk instead of one."</p>
+
+      <p>She left. Priya lingered a second longer, long enough to say, not unkindly, "You're not the villain here, Sarah. But you're not just the messenger either. Not anymore." Then she went too, and Sarah stood alone by the sink, the tap still dripping, the ticket she'd written at 2 a.m. sitting open on a laptop three rooms away, waiting.</p>
+
+      <p class="signoff">— end of scene —</p>
+    </div>
+
+    <p class="ai-footnote">This story is a work of fiction generated with the help of AI.</p>
+  </div>
+</body>
+</html>

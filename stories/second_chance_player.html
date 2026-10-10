@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Second Chance Player</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f2e9;
+    --panel: #fffdf9;
+    --ink: #211d17;
+    --ink-soft: #59503f;
+    --rule: #ddd2ba;
+    --accent: #b5792b;
+    --accent-soft: #e9c98c;
+    --shadow: rgba(33, 29, 23, 0.08);
+    --serif-display: "Fraunces", "Source Serif 4", Georgia, serif;
+    --serif-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17140f;
+      --panel: #1f1b14;
+      --ink: #ece3d2;
+      --ink-soft: #b3a68c;
+      --rule: #3a3226;
+      --accent: #e2a94f;
+      --accent-soft: #7a5a26;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #17140f;
+    --panel: #1f1b14;
+    --ink: #ece3d2;
+    --ink-soft: #b3a68c;
+    --rule: #3a3226;
+    --accent: #e2a94f;
+    --accent-soft: #7a5a26;
+    --shadow: rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 7rem;
+  }
+
+  .kicker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.6rem;
+  }
+
+  .kicker .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-soft);
+  }
+
+  h1 {
+    font-family: var(--serif-display);
+    font-weight: 600;
+    font-optical-sizing: auto;
+    font-size: clamp(2.1rem, 5.5vw, 3.1rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-align: center;
+    margin: 0 0 1rem;
+    color: var(--ink);
+  }
+
+  .subhead {
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    max-width: 32em;
+    margin: 0 auto 3.4rem;
+    line-height: 1.5;
+  }
+
+  .story p {
+    font-size: 1.14rem;
+    line-height: 1.85;
+    margin: 0 0 1.5rem;
+    max-width: 62ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .story p:first-of-type::first-letter {
+    font-family: var(--serif-display);
+    font-weight: 600;
+    font-size: 3.6rem;
+    line-height: 0.8;
+    float: left;
+    padding: 0.08em 0.08em 0 0;
+    color: var(--accent);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 3.2rem 0;
+  }
+
+  .divider .bar {
+    width: 40px;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .divider .stick {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+  }
+
+  blockquote {
+    margin: 2.6rem auto;
+    max-width: 56ch;
+    padding: 1.6rem 1.8rem;
+    background: var(--panel);
+    border-left: 3px solid var(--accent);
+    border-radius: 2px;
+    box-shadow: 0 6px 18px var(--shadow);
+    font-style: italic;
+    color: var(--ink);
+    font-size: 1.14rem;
+    line-height: 1.75;
+  }
+
+  .signoff {
+    text-align: center;
+    margin-top: 3.5rem;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 3.2rem 1.2rem 5rem; }
+    .story p { font-size: 1.05rem; }
+  }
+
+  .ai-footnote {
+    margin-top: 3rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="kicker"><span class="dot"></span>A STORY<span class="dot"></span></div>
+    <h1>The Second Chance Player</h1>
+    <p class="subhead">A man who lost his fingers, his wife, and his shop — and found his way back through a controller.</p>
+
+    <div class="story">
+      <p>Arjun Verma was sixty-one years old the first time he held a game controller.</p>
+
+      <p>His hands trembled that day — not from age, but from the years pressing down on them. A factory accident had taken two fingers from his left hand when he was thirty-four. A wife he loved had passed when he was fifty-two. And at fifty-eight, the small hardware shop he'd built from nothing, brick by brick, closed its shutters for the last time, swallowed by a mall three streets away.</p>
+
+      <p>By the time his son Rohan handed him that controller, Arjun had stopped expecting joy to knock on his door uninvited.</p>
+
+      <p>"Try it, Papa," Rohan said, setting up an old console in the corner of the small flat they now shared. "Just once. For me."</p>
+
+      <p>Arjun almost said no. He had said no to many things since Meera died — new clothes, festivals, invitations from old friends. Saying no had become easier than hoping.</p>
+
+      <p>But something in his son's eyes — a flicker of the boy who used to beg him for five more minutes at the arcade near their old house — made him sit down.</p>
+
+      <p>The screen lit up. A simple racing game. Cartoonish cars, a winding track, bright colors that reminded him of Diwali lights. His two remaining fingers and thumb fumbled over the buttons. He crashed into a wall on his first turn. Rohan laughed — not unkindly, but with a warmth Arjun hadn't heard in his son's voice for a long time.</p>
+
+      <p>"Again," Arjun said.</p>
+
+      <p>He crashed six more times that evening. On the seventh try, he finished the race — dead last, but he finished it. Something small and forgotten stirred in his chest. It didn't have a name yet. He would later understand it was hope.</p>
+
+      <div class="divider"><span class="bar"></span><span class="stick"></span><span class="bar"></span></div>
+
+      <p>The weeks that followed surprised everyone, especially Arjun himself.</p>
+
+      <p>He returned to that console every evening after his walk. Racing games gave way to puzzle games, and puzzle games gave way to slower, story-driven adventures where he guided a small animated character across mountains and rivers, solving one gentle problem at a time. He discovered that his damaged hand, which had felt useless for so long, could still learn new patterns. It simply needed a reason.</p>
+
+      <p>The neighborhood boys noticed the old man playing on weekends. One asked to join him. Then another. Soon Arjun's small living room, once silent except for the hum of an old fan, filled with the noise of teenagers arguing over strategy, and one grey-haired man in the middle of it, laughing louder than any of them.</p>
+
+      <p>"Uncle, how are you so calm during boss fights?" one boy asked once, exasperated after losing for the tenth time.</p>
+
+      <blockquote>"Beta, I buried a wife and a shop. A dragon in a video game does not scare me. But I have learned something from your games — you don't get angry when you lose a level. You just try again. I wish I had learned that lesson forty years ago."</blockquote>
+
+      <div class="divider"><span class="bar"></span><span class="stick"></span><span class="bar"></span></div>
+
+      <p>A year later, Arjun started streaming his gameplay, mostly for Rohan's amusement. His slow, thoughtful commentary — equal parts gaming tips and quiet life lessons — found an unlikely audience. People wrote to him. A woman in Pune said his videos got her through her husband's illness. A retired teacher in Kochi said watching an old man fail, laugh, and try again made him pick up a controller for his grandson's sake.</p>
+
+      <p>Arjun never called himself a gamer with pride, not at first. It felt like a young person's word. But one evening, watching his name appear in a small local newspaper article — "The Sixty-One-Year-Old Who Found Himself in a Video Game" — he sat with the paper in his lap for a long time.</p>
+
+      <p>He thought of the factory. The shop's shutters closing. The empty side of the bed he still sometimes reached across in his sleep.</p>
+
+      <p>He thought about how joy hadn't announced itself with fanfare. It had come quietly, through a plastic controller and a boy who wouldn't give up on his father.</p>
+
+      <blockquote>"It's never too late," he told his small audience that night, his voice steady. "Not for love, not for courage, not for joy. I lost fingers, but I found a new way to hold on to life. If an old man like me can start again at sixty-one — with two fingers and a stubborn heart — then you, whoever you are, watching this with all ten fingers and all your years still ahead of you, you have no excuse to give up."</blockquote>
+
+      <p>He pressed start on a new level.</p>
+
+      <p>And for the first time in a long time, Arjun Verma was not just surviving.</p>
+
+      <p class="signoff">He was playing.</p>
+    </div>
+
+    <p class="ai-footnote">This story is a work of fiction generated with the help of AI.</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XS3CQ467NH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XS3CQ467NH');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>2048</title>
+<style>
+  :root {
+    --board-bg: #bbada0;
+    --cell-bg: rgba(238, 228, 218, 0.35);
+    --text-dark: #776e65;
+    --text-light: #f9f6f2;
+    --page-bg-1: #faf8ef;
+    --page-bg-2: #eee4da;
+    --accent: #8f7a66;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(700px 500px at 12% 8%, rgba(255,196,120,0.35), transparent 60%),
+      radial-gradient(650px 500px at 88% 90%, rgba(140,210,255,0.3), transparent 60%),
+      linear-gradient(180deg, rgba(250,248,239,0.35), rgba(238,228,218,0.4)),
+      url('2048-background.jpg') center / cover no-repeat fixed;
+    color: var(--text-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    touch-action: none;
+    user-select: none;
+    overflow-x: hidden;
+  }
+  #app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: env(safe-area-inset-top, 18px) 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 40px;
+    font-weight: 700;
+    color: #6b6156;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 3px rgba(255,255,255,0.6);
+  }
+  #scores {
+    display: flex;
+    gap: 8px;
+  }
+  .score-box {
+    background: var(--board-bg);
+    color: var(--text-light);
+    border-radius: 8px;
+    padding: 8px 16px;
+    text-align: center;
+    min-width: 64px;
+  }
+  .score-box span {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #eee4da;
+    opacity: 0.8;
+  }
+  .score-box b {
+    display: block;
+    font-size: 20px;
+    font-variant-numeric: tabular-nums;
+  }
+  #toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  #toolbar p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #776e65;
+    max-width: 280px;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+  }
+  .btn {
+    appearance: none;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text-light);
+    background: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .btn:active { transform: scale(0.96); }
+
+  #board-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--board-bg);
+    border-radius: 10px;
+    padding: 3%;
+  }
+  #grid-bg, #tile-layer {
+    position: absolute;
+    inset: 3%;
+  }
+  .cell {
+    position: absolute;
+    background: var(--cell-bg);
+    border-radius: 6px;
+  }
+  .tile {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-weight: 700;
+    color: var(--text-dark);
+    background: #eee4da;
+    transition: left 100ms ease-in-out, top 100ms ease-in-out;
+    font-size: clamp(20px, 7.5vw, 46px);
+    z-index: 10;
+  }
+  .tile.digits-3 { font-size: clamp(16px, 6vw, 38px); }
+  .tile.digits-4 { font-size: clamp(13px, 4.6vw, 30px); }
+  .tile.tile-merged { z-index: 20; animation: pop 200ms ease 90ms; animation-fill-mode: backwards; }
+  .tile.tile-new { animation: appear 180ms ease 40ms; animation-fill-mode: backwards; }
+
+  .tile[data-value="2"]    { background: #eee4da; color: #776e65; }
+  .tile[data-value="4"]    { background: #ede0c8; color: #776e65; }
+  .tile[data-value="8"]    { background: #f2b179; color: #f9f6f2; }
+  .tile[data-value="16"]   { background: #f59563; color: #f9f6f2; }
+  .tile[data-value="32"]   { background: #f67c5f; color: #f9f6f2; }
+  .tile[data-value="64"]   { background: #f65e3b; color: #f9f6f2; }
+  .tile[data-value="128"]  { background: #edcf72; color: #f9f6f2; }
+  .tile[data-value="256"]  { background: #edcc61; color: #f9f6f2; }
+  .tile[data-value="512"]  { background: #edc850; color: #f9f6f2; }
+  .tile[data-value="1024"] { background: #edc53f; color: #f9f6f2; }
+  .tile[data-value="2048"] { background: #edc22e; color: #f9f6f2; box-shadow: 0 0 30px 6px rgba(243,215,116,0.7); }
+  .tile[data-supertile]    { background: #3c3a32; color: #f9f6f2; }
+
+  @keyframes pop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  @keyframes appear {
+    0% { opacity: 0; transform: scale(0); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: rgba(238, 228, 218, 0.82);
+    border-radius: 10px;
+    text-align: center;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .overlay.show { opacity: 1; pointer-events: auto; }
+  .overlay h2 {
+    margin: 0;
+    font-size: 32px;
+    color: #6b6156;
+  }
+  .overlay .actions {
+    display: flex;
+    gap: 10px;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>2048</h1>
+    <div id="scores">
+      <div class="score-box"><span>Score</span><b id="scoreVal">0</b></div>
+      <div class="score-box"><span>Best</span><b id="bestVal">0</b></div>
+    </div>
+  </header>
+  <div id="toolbar">
+    <p>Swipe or use arrow keys to move the tiles. When two tiles with the same number touch, they merge into one!</p>
+    <button class="btn" id="resetBtn">New Game</button>
+  </div>
+
+  <div id="board-wrap">
+    <div id="grid-bg"></div>
+    <div id="tile-layer"></div>
+
+    <div class="overlay" id="winOverlay">
+      <h2>You Win!</h2>
+      <div class="actions">
+        <button class="btn" id="keepGoingBtn">Keep Going</button>
+        <button class="btn" id="winNewGameBtn">New Game</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="overOverlay">
+      <h2>Game Over</h2>
+      <div class="actions">
+        <button class="btn" id="tryAgainBtn">Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const SIZE = 4;
+  const GAP = 3;                       // percent
+  const CELL = (100 - GAP * (SIZE + 1)) / SIZE; // percent
+
+  function cellPos(i) { return GAP + i * (CELL + GAP); }
+
+  // ---------- Grid ----------
+  class Grid {
+    constructor(size) {
+      this.size = size;
+      this.cells = this.buildEmpty();
+    }
+    buildEmpty() {
+      const cells = [];
+      for (let x = 0; x < this.size; x++) {
+        cells[x] = [];
+        for (let y = 0; y < this.size; y++) cells[x][y] = null;
+      }
+      return cells;
+    }
+    randomAvailableCell() {
+      const cells = this.availableCells();
+      if (!cells.length) return null;
+      return cells[Math.floor(Math.random() * cells.length)];
+    }
+    availableCells() {
+      const list = [];
+      this.eachCell((x, y, tile) => { if (!tile) list.push({ x, y }); });
+      return list;
+    }
+    eachCell(cb) {
+      for (let x = 0; x < this.size; x++)
+        for (let y = 0; y < this.size; y++)
+          cb(x, y, this.cells[x][y]);
+    }
+    cellsAvailable() { return this.availableCells().length > 0; }
+    cellAvailable(cell) { return !this.cellOccupied(cell); }
+    cellOccupied(cell) { return !!this.cellContent(cell); }
+    cellContent(cell) {
+      if (this.withinBounds(cell)) return this.cells[cell.x][cell.y];
+      return null;
+    }
+    insertTile(tile) { this.cells[tile.x][tile.y] = tile; }
+    removeTile(tile) { this.cells[tile.x][tile.y] = null; }
+    withinBounds(pos) { return pos.x >= 0 && pos.x < this.size && pos.y >= 0 && pos.y < this.size; }
+  }
+
+  // ---------- Tile ----------
+  let tileIdSeq = 0;
+  class Tile {
+    constructor(pos, value) {
+      this.id = tileIdSeq++;
+      this.x = pos.x; this.y = pos.y;
+      this.value = value;
+      this.previousPosition = null;
+      this.mergedFrom = null;
+    }
+    savePosition() { this.previousPosition = { x: this.x, y: this.y }; }
+    updatePosition(pos) { this.x = pos.x; this.y = pos.y; }
+  }
+
+  // ---------- Game manager ----------
+  const DIR = { UP: 0, RIGHT: 1, DOWN: 2, LEFT: 3 };
+
+  class GameManager {
+    constructor() {
+      this.score = 0;
+      this.best = Number(localStorage.getItem("2048Best") || 0);
+      this.over = false;
+      this.won = false;
+      this.keepPlaying = false;
+      this.setup();
+    }
+    setup() {
+      this.grid = new Grid(SIZE);
+      this.score = 0;
+      this.over = false;
+      this.won = false;
+      this.keepPlaying = false;
+      this.addStartTiles();
+      this.actuate();
+    }
+    addStartTiles() {
+      for (let i = 0; i < 2; i++) this.addRandomTile();
+    }
+    addRandomTile() {
+      const cell = this.grid.randomAvailableCell();
+      if (!cell) return;
+      const value = Math.random() < 0.9 ? 2 : 4;
+      this.grid.insertTile(new Tile(cell, value));
+    }
+    prepareTiles() {
+      this.grid.eachCell((x, y, tile) => {
+        if (tile) { tile.mergedFrom = null; tile.savePosition(); }
+      });
+    }
+    moveTile(tile, cell) {
+      this.grid.cells[tile.x][tile.y] = null;
+      this.grid.cells[cell.x][cell.y] = tile;
+      tile.updatePosition(cell);
+    }
+    getVector(dir) {
+      return {
+        [DIR.UP]: { x: 0, y: -1 },
+        [DIR.RIGHT]: { x: 1, y: 0 },
+        [DIR.DOWN]: { x: 0, y: 1 },
+        [DIR.LEFT]: { x: -1, y: 0 }
+      }[dir];
+    }
+    buildTraversals(vector) {
+      const traversals = { x: [], y: [] };
+      for (let i = 0; i < SIZE; i++) { traversals.x.push(i); traversals.y.push(i); }
+      if (vector.x === 1) traversals.x = traversals.x.reverse();
+      if (vector.y === 1) traversals.y = traversals.y.reverse();
+      return traversals;
+    }
+    findFarthestPosition(cell, vector) {
+      let previous;
+      do {
+        previous = cell;
+        cell = { x: previous.x + vector.x, y: previous.y + vector.y };
+      } while (this.grid.withinBounds(cell) && this.grid.cellAvailable(cell));
+      return { farthest: previous, next: cell };
+    }
+    positionsEqual(a, b) { return a.x === b.x && a.y === b.y; }
+
+    move(dir) {
+      if (this.over || (this.won && !this.keepPlaying)) return false;
+
+      const vector = this.getVector(dir);
+      const traversals = this.buildTraversals(vector);
+      let moved = false;
+
+      this.prepareTiles();
+
+      traversals.x.forEach((x) => {
+        traversals.y.forEach((y) => {
+          const cell = { x, y };
+          const tile = this.grid.cellContent(cell);
+          if (!tile) return;
+
+          const positions = this.findFarthestPosition(cell, vector);
+          const next = this.grid.cellContent(positions.next);
+
+          if (next && next.value === tile.value && !next.mergedFrom) {
+            const merged = new Tile(positions.next, tile.value * 2);
+            merged.mergedFrom = [tile, next];
+
+            this.grid.insertTile(merged);
+            this.grid.removeTile(tile);
+
+            tile.updatePosition(positions.next);
+
+            this.score += merged.value;
+            if (merged.value >= 2048 && !this.won) this.won = true;
+          } else {
+            this.moveTile(tile, positions.farthest);
+          }
+
+          if (!this.positionsEqual(cell, tile)) moved = true;
+        });
+      });
+
+      if (moved) {
+        this.addRandomTile();
+        if (!this.movesAvailable()) this.over = true;
+        this.actuate();
+      }
+      return moved;
+    }
+
+    movesAvailable() {
+      return this.grid.cellsAvailable() || this.tileMatchesAvailable();
+    }
+    tileMatchesAvailable() {
+      let found = false;
+      this.grid.eachCell((x, y, tile) => {
+        if (found || !tile) return;
+        for (const dir of [DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT]) {
+          const vector = this.getVector(dir);
+          const cell = { x: x + vector.x, y: y + vector.y };
+          const other = this.grid.cellContent(cell);
+          if (other && other.value === tile.value) { found = true; break; }
+        }
+      });
+      return found;
+    }
+
+    actuate() {
+      if (this.score > this.best) {
+        this.best = this.score;
+        localStorage.setItem("2048Best", String(this.best));
+      }
+      renderer.render(this.grid, {
+        score: this.score,
+        best: this.best,
+        over: this.over,
+        won: this.won,
+        keepPlaying: this.keepPlaying
+      });
+    }
+  }
+
+  // ---------- Renderer ----------
+  class Renderer {
+    constructor() {
+      this.gridBgEl = document.getElementById("grid-bg");
+      this.tileLayerEl = document.getElementById("tile-layer");
+      this.scoreEl = document.getElementById("scoreVal");
+      this.bestEl = document.getElementById("bestVal");
+      this.winOverlay = document.getElementById("winOverlay");
+      this.overOverlay = document.getElementById("overOverlay");
+      this.buildBackground();
+    }
+    buildBackground() {
+      this.gridBgEl.innerHTML = "";
+      for (let x = 0; x < SIZE; x++) {
+        for (let y = 0; y < SIZE; y++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.style.left = cellPos(x) + "%";
+          cell.style.top = cellPos(y) + "%";
+          cell.style.width = CELL + "%";
+          cell.style.height = CELL + "%";
+          this.gridBgEl.appendChild(cell);
+        }
+      }
+    }
+    render(grid, meta) {
+      this.tileLayerEl.innerHTML = "";
+      grid.eachCell((x, y, tile) => { if (tile) this.addTile(tile); });
+
+      this.scoreEl.textContent = meta.score;
+      this.bestEl.textContent = meta.best;
+
+      this.winOverlay.classList.toggle("show", meta.won && !meta.keepPlaying);
+      this.overOverlay.classList.toggle("show", meta.over);
+    }
+    positionTile(el, x, y) {
+      el.style.left = cellPos(x) + "%";
+      el.style.top = cellPos(y) + "%";
+    }
+    styleTileValue(el, value) {
+      el.textContent = value;
+      el.dataset.value = value;
+      el.classList.remove("digits-3", "digits-4");
+      const len = String(value).length;
+      if (value > 2048) el.setAttribute("data-supertile", "");
+      if (len === 3) el.classList.add("digits-3");
+      else if (len >= 4) el.classList.add("digits-4");
+    }
+    addTile(tile) {
+      if (tile.mergedFrom) {
+        tile.mergedFrom.forEach((source) => this.addTile(source));
+
+        const el = document.createElement("div");
+        el.className = "tile tile-merged";
+        el.style.width = CELL + "%";
+        el.style.height = CELL + "%";
+        this.styleTileValue(el, tile.value);
+        this.positionTile(el, tile.x, tile.y);
+        this.tileLayerEl.appendChild(el);
+        return;
+      }
+
+      const el = document.createElement("div");
+      el.className = "tile";
+      el.style.width = CELL + "%";
+      el.style.height = CELL + "%";
+      this.styleTileValue(el, tile.value);
+
+      if (tile.previousPosition) {
+        this.positionTile(el, tile.previousPosition.x, tile.previousPosition.y);
+        this.tileLayerEl.appendChild(el);
+        requestAnimationFrame(() => this.positionTile(el, tile.x, tile.y));
+      } else {
+        el.classList.add("tile-new");
+        this.positionTile(el, tile.x, tile.y);
+        this.tileLayerEl.appendChild(el);
+      }
+    }
+  }
+
+  // ---------- Boot ----------
+  const renderer = new Renderer();
+  const game = new GameManager();
+
+  function newGame() { game.setup(); }
+
+  // ---------- Input ----------
+  const KEY_DIR = {
+    ArrowUp: DIR.UP, KeyW: DIR.UP,
+    ArrowRight: DIR.RIGHT, KeyD: DIR.RIGHT,
+    ArrowDown: DIR.DOWN, KeyS: DIR.DOWN,
+    ArrowLeft: DIR.LEFT, KeyA: DIR.LEFT
+  };
+  window.addEventListener("keydown", (e) => {
+    const dir = KEY_DIR[e.code];
+    if (dir === undefined) return;
+    e.preventDefault();
+    game.move(dir);
+  });
+
+  const boardWrap = document.getElementById("board-wrap");
+  let touchStartX = 0, touchStartY = 0, touchActive = false;
+  boardWrap.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    const t = e.touches[0];
+    touchStartX = t.clientX; touchStartY = t.clientY;
+    touchActive = true;
+  }, { passive: false });
+  boardWrap.addEventListener("touchmove", (e) => { e.preventDefault(); }, { passive: false });
+  boardWrap.addEventListener("touchend", (e) => {
+    if (!touchActive) return;
+    touchActive = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX, dy = t.clientY - touchStartY;
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+    if (Math.max(adx, ady) < 16) return;
+    if (adx > ady) game.move(dx > 0 ? DIR.RIGHT : DIR.LEFT);
+    else game.move(dy > 0 ? DIR.DOWN : DIR.UP);
+  }, { passive: false });
+
+  document.getElementById("resetBtn").addEventListener("click", newGame);
+  document.getElementById("tryAgainBtn").addEventListener("click", newGame);
+  document.getElementById("winNewGameBtn").addEventListener("click", newGame);
+  document.getElementById("keepGoingBtn").addEventListener("click", () => {
+    game.keepPlaying = true;
+    game.actuate();
+  });
+
+  document.getElementById("bestVal").textContent = game.best;
+})();
+</script>
+</body>
+</html>

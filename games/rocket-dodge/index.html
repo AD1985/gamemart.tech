@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XS3CQ467NH"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XS3CQ467NH');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Rocket Dodge</title>
+<style>
+  :root {
+    --bg-1: #0d1230;
+    --bg-2: #060714;
+    --accent: #5cd8ff;
+    --accent-2: #ff7b54;
+    --text: #eaf3ff;
+    --muted: #7f8bb0;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background:
+      radial-gradient(700px 500px at 12% 8%, rgba(92,216,255,0.4), transparent 60%),
+      radial-gradient(650px 500px at 88% 90%, rgba(255,123,84,0.35), transparent 60%),
+      linear-gradient(180deg, rgba(13,18,48,0.45) 0%, rgba(6,7,20,0.55) 100%),
+      url('rocket-dodge-background.jpg') center / cover no-repeat fixed;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+  }
+  #stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    padding: env(safe-area-inset-top, 10px) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 10px) env(safe-area-inset-left, 10px);
+  }
+  #hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px 10px;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    flex-shrink: 0;
+    gap: 8px;
+  }
+  #hud .stat { display: flex; flex-direction: column; align-items: center; min-width: 64px; }
+  #hud .stat b {
+    font-size: 20px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  #canvasWrap {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 3 / 5;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 20px 60px rgba(0,0,0,0.55), inset 0 0 60px rgba(92,216,255,0.06);
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #060816;
+    touch-action: none;
+  }
+  #hint {
+    position: absolute;
+    left: 0; right: 0; bottom: 10px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    opacity: 0.85;
+    pointer-events: none;
+    transition: opacity .3s;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+    background: rgba(6, 8, 22, 0.72);
+    backdrop-filter: blur(6px);
+    padding: 24px;
+  }
+  .overlay.hidden { display: none; }
+  .overlay h1 {
+    font-size: 30px;
+    margin: 0;
+    letter-spacing: 0.03em;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .overlay p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; max-width: 300px; }
+  .overlay .big { font-size: 22px; color: var(--text); font-weight: 600; }
+  .overlay .best-badge {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .overlay .best-badge.show { opacity: 1; transform: translateY(0); }
+  .btn {
+    appearance: none;
+    border: none;
+    padding: 13px 28px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: #06121c;
+    background: linear-gradient(135deg, var(--accent), #8fe6ff);
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(92,216,255,0.35);
+  }
+  .tap-restart {
+    margin-top: 4px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    text-transform: uppercase;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.06); }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame">
+    <div id="hud">
+      <div class="stat"><span>Score</span><b id="scoreVal">0</b></div>
+      <div class="stat"><span>Best</span><b id="bestVal">0</b></div>
+    </div>
+    <div id="canvasWrap">
+      <canvas id="game"></canvas>
+      <div id="hint">Tap or press Space to thrust</div>
+
+      <div class="overlay" id="startOverlay">
+        <h1>ROCKET DODGE</h1>
+        <p>Gravity pulls your rocket down. Tap or press Space to thrust upward and weave through the asteroid fields.</p>
+        <button class="btn" id="startBtn">Launch</button>
+      </div>
+
+      <div class="overlay hidden" id="gameOverOverlay">
+        <h1>Game Over</h1>
+        <div class="big" id="finalScore">Score: 0</div>
+        <div class="best-badge" id="newBestMsg">★ New Best Score! ★</div>
+        <div class="tap-restart">Tap to Restart</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ---------- Setup ----------
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const wrap = document.getElementById("canvasWrap");
+
+  const LOGICAL_W = 420;
+  const LOGICAL_H = 700;
+
+  let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2.5));
+  let scaleX = 1, scaleY = 1;
+
+  function resize() {
+    const rect = wrap.getBoundingClientRect();
+    dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2.5));
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    scaleX = canvas.width / LOGICAL_W;
+    scaleY = canvas.height / LOGICAL_H;
+  }
+  window.addEventListener("resize", resize);
+  window.addEventListener("orientationchange", resize);
+
+  // ---------- Tuning (self-corrected for fair-but-challenging feel) ----------
+  const GRAVITY = 1550;          // px/s^2 downward acceleration
+  const FLAP_VELOCITY = -470;    // px/s instantaneous upward impulse
+  const MAX_FALL_SPEED = 720;    // terminal velocity cap
+  const ROCKET_X = LOGICAL_W * 0.3;
+  const ROCKET_RADIUS = 15;      // collision radius (a touch smaller than the sprite for fairness)
+
+  const START_GAP = 235;
+  const MIN_GAP = 150;           // gap never narrows past this, keeps it playable
+  const GAP_SHRINK_PER_POINT = 3;
+
+  const START_SPEED = 225;
+  const MAX_SPEED = 350;
+  const SPEED_RAMP_PER_POINT = 3.5;
+
+  const OBSTACLE_WIDTH = 66;
+  const SPAWN_INTERVAL_MAX = 1.35; // seconds between spawns at low score
+  const SPAWN_INTERVAL_MIN = 0.95; // never faster than this, stays reactable
+
+  function gapForScore(score) {
+    return Math.max(MIN_GAP, START_GAP - score * GAP_SHRINK_PER_POINT);
+  }
+  function speedForScore(score) {
+    return Math.min(MAX_SPEED, START_SPEED + score * SPEED_RAMP_PER_POINT);
+  }
+  function spawnIntervalForScore(score) {
+    return Math.max(SPAWN_INTERVAL_MIN, SPAWN_INTERVAL_MAX - score * 0.015);
+  }
+
+  // ---------- State ----------
+  const BEST_KEY = "rocketDodgeBest";
+  let best = Number(localStorage.getItem(BEST_KEY) || 0);
+  let score = 0;
+  let state = "ready"; // ready | playing | over
+  let overSince = 0;
+
+  let rocket, prevRocketY, obstacles, spawnTimer, stars, shakeTime, particles;
+
+  function resetWorld() {
+    rocket = { y: LOGICAL_H * 0.45, vy: 0, rotation: 0 };
+    prevRocketY = rocket.y;
+    obstacles = [];
+    spawnTimer = 0;
+    shakeTime = 0;
+    particles = [];
+    score = 0;
+    updateHud();
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < 70; i++) {
+      stars.push({
+        x: Math.random() * LOGICAL_W,
+        y: Math.random() * LOGICAL_H,
+        r: Math.random() * 1.6 + 0.4,
+        speed: 20 + Math.random() * 60,
+        a: Math.random() * 0.6 + 0.3
+      });
+    }
+  }
+
+  function updateHud() {
+    document.getElementById("scoreVal").textContent = String(score);
+    document.getElementById("bestVal").textContent = String(best);
+  }
+
+  function spawnObstacle(xStart) {
+    const gap = gapForScore(score);
+    const margin = 46;
+    const gapY = margin + gap / 2 + Math.random() * (LOGICAL_H - margin * 2 - gap);
+    const edgeOffsets = [];
+    const segments = 6;
+    for (let i = 0; i <= segments; i++) edgeOffsets.push((Math.random() - 0.5) * 22);
+    const craters = [];
+    for (let i = 0; i < 4; i++) {
+      craters.push({
+        rx: Math.random(),
+        ry: Math.random(),
+        r: 4 + Math.random() * 8
+      });
+    }
+    obstacles.push({
+      x: xStart,
+      width: OBSTACLE_WIDTH,
+      gapY,
+      gap,
+      passed: false,
+      edgeOffsets,
+      craters
+    });
+  }
+
+  // ---------- Input ----------
+  function flap() {
+    if (state === "ready") {
+      startGame();
+      return;
+    }
+    if (state === "over") {
+      if (performance.now() - overSince > 350) restartToReady();
+      return;
+    }
+    rocket.vy = FLAP_VELOCITY;
+    spawnThrustParticles();
+  }
+
+  function spawnThrustParticles() {
+    for (let i = 0; i < 6; i++) {
+      particles.push({
+        x: ROCKET_X - 12,
+        y: rocket.y + (Math.random() - 0.5) * 8,
+        vx: -80 - Math.random() * 60,
+        vy: (Math.random() - 0.5) * 60,
+        life: 0.35 + Math.random() * 0.2,
+        age: 0,
+        r: 2 + Math.random() * 2.5
+      });
+    }
+  }
+
+  function startGame() {
+    resetWorld();
+    state = "playing";
+    document.getElementById("startOverlay").classList.add("hidden");
+    document.getElementById("gameOverOverlay").classList.add("hidden");
+    document.getElementById("hint").style.opacity = "0";
+    rocket.vy = FLAP_VELOCITY;
+    spawnThrustParticles();
+  }
+
+  function restartToReady() {
+    state = "ready";
+    resetWorld();
+    document.getElementById("gameOverOverlay").classList.add("hidden");
+    document.getElementById("startOverlay").classList.remove("hidden");
+    document.getElementById("hint").style.opacity = "1";
+  }
+
+  function gameOver() {
+    state = "over";
+    overSince = performance.now();
+    shakeTime = 0.35;
+    const isNewBest = score > best;
+    if (isNewBest) {
+      best = score;
+      localStorage.setItem(BEST_KEY, String(best));
+    }
+    updateHud();
+    document.getElementById("finalScore").textContent = "Score: " + score;
+    const badge = document.getElementById("newBestMsg");
+    badge.classList.toggle("show", isNewBest);
+    document.getElementById("gameOverOverlay").classList.remove("hidden");
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "Space") {
+      e.preventDefault();
+      if (!e.repeat) flap();
+    }
+  });
+  wrap.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    flap();
+  });
+
+  // ---------- Fixed-timestep update ----------
+  const FIXED_DT = 1 / 120;
+
+  function update(dt) {
+    if (state !== "playing") return;
+
+    prevRocketY = rocket.y;
+    rocket.vy += GRAVITY * dt;
+    if (rocket.vy > MAX_FALL_SPEED) rocket.vy = MAX_FALL_SPEED;
+    rocket.y += rocket.vy * dt;
+    rocket.rotation = Math.max(-0.5, Math.min(0.9, rocket.vy / 620));
+
+    const speed = speedForScore(score);
+    spawnTimer -= dt;
+    if (spawnTimer <= 0) {
+      spawnObstacle(LOGICAL_W + OBSTACLE_WIDTH);
+      spawnTimer = spawnIntervalForScore(score);
+    }
+
+    for (const ob of obstacles) {
+      ob.x -= speed * dt;
+      if (!ob.passed && ob.x + ob.width < ROCKET_X - ROCKET_RADIUS) {
+        ob.passed = true;
+        score++;
+        updateHud();
+      }
+    }
+    while (obstacles.length && obstacles[0].x + obstacles[0].width < -10) {
+      obstacles.shift();
+    }
+
+    for (const p of particles) {
+      p.age += dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+    }
+    particles = particles.filter(p => p.age < p.life);
+
+    // boundary collision
+    if (rocket.y - ROCKET_RADIUS < 0 || rocket.y + ROCKET_RADIUS > LOGICAL_H) {
+      gameOver();
+      return;
+    }
+
+    // obstacle collision (circle vs rect, closest-point method)
+    for (const ob of obstacles) {
+      const topRect = { x: ob.x, y: 0, w: ob.width, h: ob.gapY - ob.gap / 2 };
+      const botRect = { x: ob.x, y: ob.gapY + ob.gap / 2, w: ob.width, h: LOGICAL_H - (ob.gapY + ob.gap / 2) };
+      if (circleHitsRect(ROCKET_X, rocket.y, ROCKET_RADIUS, topRect) ||
+          circleHitsRect(ROCKET_X, rocket.y, ROCKET_RADIUS, botRect)) {
+        gameOver();
+        return;
+      }
+    }
+  }
+
+  function circleHitsRect(cx, cy, r, rect) {
+    const closestX = Math.max(rect.x, Math.min(cx, rect.x + rect.w));
+    const closestY = Math.max(rect.y, Math.min(cy, rect.y + rect.h));
+    const dx = cx - closestX;
+    const dy = cy - closestY;
+    return (dx * dx + dy * dy) < r * r;
+  }
+
+  // ---------- Rendering ----------
+  function drawBackground(dt) {
+    const g = ctx.createLinearGradient(0, 0, 0, LOGICAL_H);
+    g.addColorStop(0, "#141b45");
+    g.addColorStop(0.55, "#0a0e2a");
+    g.addColorStop(1, "#050612");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+    for (const s of stars) {
+      s.x -= s.speed * dt;
+      if (s.x < -2) s.x = LOGICAL_W + 2;
+      ctx.globalAlpha = s.a;
+      ctx.fillStyle = "#dff1ff";
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawAsteroidBlock(ob, isTop) {
+    const { x, width, edgeOffsets, craters, gapY, gap } = ob;
+    const edgeY = isTop ? gapY - gap / 2 : gapY + gap / 2;
+    const segments = edgeOffsets.length - 1;
+
+    ctx.save();
+    const grad = ctx.createLinearGradient(x, 0, x + width, 0);
+    grad.addColorStop(0, "#4a4438");
+    grad.addColorStop(0.5, "#736b5a");
+    grad.addColorStop(1, "#38332a");
+    ctx.fillStyle = grad;
+
+    ctx.beginPath();
+    if (isTop) {
+      ctx.moveTo(x, 0);
+      for (let i = 0; i <= segments; i++) {
+        const px = x + (width * i) / segments;
+        const py = edgeY + edgeOffsets[i];
+        ctx.lineTo(px, py);
+      }
+      ctx.lineTo(x + width, 0);
+      ctx.closePath();
+    } else {
+      ctx.moveTo(x, LOGICAL_H);
+      for (let i = 0; i <= segments; i++) {
+        const px = x + (width * i) / segments;
+        const py = edgeY + edgeOffsets[i];
+        ctx.lineTo(px, py);
+      }
+      ctx.lineTo(x + width, LOGICAL_H);
+      ctx.closePath();
+    }
+    ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.35)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.clip();
+    const blockTop = isTop ? 0 : edgeY;
+    const blockH = isTop ? edgeY : LOGICAL_H - edgeY;
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    for (const c of craters) {
+      const cx = x + c.rx * width;
+      const cy = blockTop + c.ry * blockH;
+      ctx.beginPath();
+      ctx.arc(cx, cy, c.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawRocket(alpha) {
+    const y = prevRocketY + (rocket.y - prevRocketY) * alpha;
+    ctx.save();
+    ctx.translate(ROCKET_X, y);
+    ctx.rotate(rocket.rotation);
+
+    // flame
+    const flicker = 8 + Math.random() * 6;
+    const flameGrad = ctx.createLinearGradient(-24 - flicker, 0, -14, 0);
+    flameGrad.addColorStop(0, "rgba(255,123,84,0)");
+    flameGrad.addColorStop(1, "#ffcf5c");
+    ctx.fillStyle = flameGrad;
+    ctx.beginPath();
+    ctx.moveTo(-14, -6);
+    ctx.lineTo(-14 - flicker, 0);
+    ctx.lineTo(-14, 6);
+    ctx.closePath();
+    ctx.fill();
+
+    // body
+    ctx.fillStyle = "#d8e6f2";
+    ctx.beginPath();
+    ctx.moveTo(18, 0);
+    ctx.quadraticCurveTo(6, -14, -14, -8);
+    ctx.quadraticCurveTo(-8, 0, -14, 8);
+    ctx.quadraticCurveTo(6, 14, 18, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // fins
+    ctx.fillStyle = "#ff7b54";
+    ctx.beginPath();
+    ctx.moveTo(-6, -8);
+    ctx.lineTo(-18, -16);
+    ctx.lineTo(-8, -4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-6, 8);
+    ctx.lineTo(-18, 16);
+    ctx.lineTo(-8, 4);
+    ctx.closePath();
+    ctx.fill();
+
+    // window
+    ctx.fillStyle = "#5cd8ff";
+    ctx.beginPath();
+    ctx.arc(4, 0, 4.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#0a1a2a";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawParticles() {
+    for (const p of particles) {
+      const t = 1 - p.age / p.life;
+      ctx.globalAlpha = Math.max(0, t);
+      ctx.fillStyle = "#ffcf5c";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * t, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function render(dt, alpha) {
+    ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+
+    let shakeX = 0, shakeY = 0;
+    if (shakeTime > 0) {
+      shakeTime -= dt;
+      const s = Math.max(0, shakeTime) * 26;
+      shakeX = (Math.random() - 0.5) * s;
+      shakeY = (Math.random() - 0.5) * s;
+    }
+    ctx.save();
+    ctx.translate(shakeX, shakeY);
+
+    drawBackground(dt);
+    for (const ob of obstacles) {
+      drawAsteroidBlock(ob, true);
+      drawAsteroidBlock(ob, false);
+    }
+    drawParticles();
+    if (state !== "ready") drawRocket(alpha);
+    else drawRocket(1);
+
+    ctx.restore();
+  }
+
+  // ---------- Main loop ----------
+  let lastTime = null;
+  let accumulator = 0;
+
+  function loop(now) {
+    requestAnimationFrame(loop);
+    if (lastTime === null) lastTime = now;
+    let frameTime = (now - lastTime) / 1000;
+    lastTime = now;
+    if (frameTime > 0.25) frameTime = 0.25;
+    accumulator += frameTime;
+
+    let steps = 0;
+    while (accumulator >= FIXED_DT && steps < 8) {
+      update(FIXED_DT);
+      accumulator -= FIXED_DT;
+      steps++;
+    }
+    const alpha = accumulator / FIXED_DT;
+    render(frameTime, alpha);
+  }
+
+  // ---------- Boot ----------
+  resize();
+  initStars();
+  resetWorld();
+  updateHud();
+  document.getElementById("startBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    startGame();
+  });
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

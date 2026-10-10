@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cricket Lover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f2e9;
+    --panel: #fffdf9;
+    --ink: #211d17;
+    --ink-soft: #59503f;
+    --rule: #ddd2ba;
+    --accent: #b5792b;
+    --accent-soft: #e9c98c;
+    --shadow: rgba(33, 29, 23, 0.08);
+    --serif-display: "Fraunces", "Source Serif 4", Georgia, serif;
+    --serif-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17140f;
+      --panel: #1f1b14;
+      --ink: #ece3d2;
+      --ink-soft: #b3a68c;
+      --rule: #3a3226;
+      --accent: #e2a94f;
+      --accent-soft: #7a5a26;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #17140f;
+    --panel: #1f1b14;
+    --ink: #ece3d2;
+    --ink-soft: #b3a68c;
+    --rule: #3a3226;
+    --accent: #e2a94f;
+    --accent-soft: #7a5a26;
+    --shadow: rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 7rem;
+  }
+
+  .kicker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.6rem;
+  }
+
+  .kicker .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-soft);
+  }
+
+  h1 {
+    font-family: var(--serif-display);
+    font-weight: 600;
+    font-optical-sizing: auto;
+    font-size: clamp(2.1rem, 5.5vw, 3.1rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-align: center;
+    margin: 0 0 1rem;
+    color: var(--ink);
+  }
+
+  .subhead {
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    max-width: 32em;
+    margin: 0 auto 3.4rem;
+    line-height: 1.5;
+  }
+
+  .story p {
+    font-size: 1.14rem;
+    line-height: 1.85;
+    margin: 0 0 1.5rem;
+    max-width: 62ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .story p:first-of-type::first-letter {
+    font-family: var(--serif-display);
+    font-weight: 600;
+    font-size: 3.6rem;
+    line-height: 0.8;
+    float: left;
+    padding: 0.08em 0.08em 0 0;
+    color: var(--accent);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 3.2rem 0;
+  }
+
+  .divider .bar {
+    width: 40px;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .divider .stick {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+  }
+
+  blockquote {
+    margin: 2.6rem auto;
+    max-width: 56ch;
+    padding: 1.6rem 1.8rem;
+    background: var(--panel);
+    border-left: 3px solid var(--accent);
+    border-radius: 2px;
+    box-shadow: 0 6px 18px var(--shadow);
+    font-style: italic;
+    color: var(--ink);
+    font-size: 1.14rem;
+    line-height: 1.75;
+  }
+
+  .signoff {
+    text-align: center;
+    margin-top: 3.5rem;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 3.2rem 1.2rem 5rem; }
+    .story p { font-size: 1.05rem; }
+  }
+
+  .ai-footnote {
+    margin-top: 3rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="kicker"><span class="dot"></span>A STORY<span class="dot"></span></div>
+    <h1>The Cricket Lover</h1>
+    <p class="subhead">A boy who dreamed of the national jersey, and the software engineer who found his way back to the crease.</p>
+
+    <div class="story">
+      <p>The afternoon sun beat down on the dusty streets of a small suburban neighborhood, but ten-year-old Kabir didn't care. His hands, worn and calloused from gripping a heavy wooden bat, swung with precise perfection. Every cracked plastic ball that came his way was sent flying over the makeshift brick wickets. Kabir didn't just play cricket; he lived it. He memorized statistics, studied the footwork of legendary batsmen, and fell asleep listening to the distant commentary of late-night matches on the radio. He promised himself that one day, he would wear the national jersey.</p>
+
+      <p>But as Kabir grew, so did the stack of textbooks on his desk.</p>
+
+      <p>By the time he turned seventeen, the carefree street matches were replaced by intense coaching classes. His father, a pragmatic man who had worked decades as a government clerk, saw sports as a dangerous gamble.</p>
+
+      <blockquote>"Cricket is for a chosen few, Kabir," his father said one evening, laying down a brochure for a prestigious engineering college. "Engineering is for safety. A degree ensures a life. A sport can leave you with nothing but broken knees and regret."</blockquote>
+
+      <p>Kabir looked at his cricket kit bag resting in the corner of the room, gathering dust. The silent pressure from his family — the sacrifices they made for his tuition, the hopeful looks in his mother's eyes — felt heavier than any target he had ever chased on the pitch. He surrendered. He packed away his leg guards and picked up a scientific calculator.</p>
+
+      <div class="divider"><span class="bar"></span><span class="stick"></span><span class="bar"></span></div>
+
+      <p>The next four years at engineering college were a blur of circuits, coding labs, and semester exams. Kabir did well because he was disciplined, but his heart was hollow. While his classmates celebrated placements at multinational tech firms, Kabir felt like a ghost walking through someone else's life. He eventually accepted a stable job as a software engineer, moving to a new city to sit in a cubicle for nine hours a day.</p>
+
+      <p>For two years, Kabir barely looked at a cricket match. The pain of what he had left behind was too sharp.</p>
+
+      <p>Then, one Saturday morning, while walking to a local grocery store, he heard a familiar sound. It was the sharp, clean thwack of a leather ball meeting a willow bat.</p>
+
+      <p>He followed the sound to a neighborhood park. A group of men — ranging from college students to middle-aged uncles — were playing a heated match. The bowling was fast, the fielding was chaotic, and the laughter was loud. Kabir stopped by the boundary line, watching intently.</p>
+
+      <p>The batting team was chasing a tough total, and suddenly, their opening batsman pulled a hamstring. They were one player short.</p>
+
+      <p>A man in his late thirties, wiping sweat from his forehead, noticed Kabir standing there. "Hey brother! You know how to play? We need a batsman or we have to forfeit."</p>
+
+      <p>Kabir hesitated. He looked at his sneakers, then at the leather ball bouncing in the bowler's hand. The dormant passion inside him flared to life. "Yeah," Kabir said, a smile breaking across his face. "I can bat."</p>
+
+      <p>He walked onto the field, borrowing a mismatched pair of gloves and a slightly chipped bat. As he took his stance at the crease, the familiar weight in his hands felt like a long-lost friend. The corporate stress, the years of forced studying, and the resentment faded away.</p>
+
+      <div class="divider"><span class="bar"></span><span class="stick"></span><span class="bar"></span></div>
+
+      <p>The bowler rushed in and delivered a fast, short-pitched ball. Kabir's instincts took over. He shifted his weight, pivoted perfectly, and executed a flawless pull shot, sending the ball soaring over the boundary for a six. The fielders cheered, and the captain open-mouthedly stared at him.</p>
+
+      <p>Kabir didn't make it to the international stadiums, and he never wore the national jersey. But that Saturday changed everything. He joined the local community club, becoming their star batsman. Every weekend, the software engineer transformed into the local cricket hero.</p>
+
+      <blockquote>He realized that his father hadn't been entirely wrong — engineering paid his bills and gave him security. But his family couldn't control his passion forever. Kabir found his balance, proving that a dream deferred didn't have to be a dream destroyed.</blockquote>
+
+      <p>On that local patch of green grass, under the weekend sun, he was exactly who he was always meant to be.</p>
+    </div>
+
+    <p class="ai-footnote">This story is a work of fiction generated with the help of AI.</p>
+  </div>
+</body>
+</html>
